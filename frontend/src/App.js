@@ -8,6 +8,11 @@ import Kids from './pages/Kids';
 import Register from './pages/Register';
 import Login from './pages/Login';
 import Home from './pages/Home';
+import Viewcart from './pages/Viewcart';
+import OrderHistory from './pages/OrderHistory';
+import Adminlogin from './pages/Adminlogin';
+import Addproduct from './pages/Addproduct';
+import Vieworders from './pages/Vieworders';
 
 function App() {
   return (
@@ -20,6 +25,11 @@ function App() {
           <Route path='kids' element={<Kids />}></Route>
           <Route path='register' element={<Register />}></Route>
           <Route path='login' element={<Login />}></Route>
+          <Route path='viewcart' element={<Viewcart />}></Route>
+          <Route path='ohistory' element={<OrderHistory />}></Route>
+          <Route path='alogin' element={<Adminlogin />}></Route>
+          <Route path='addproduct' element={<Addproduct />}></Route>
+          <Route path='vieworders' element={<Vieworders />}></Route>
         </Route>
       </Routes>
     </BrowserRouter>
