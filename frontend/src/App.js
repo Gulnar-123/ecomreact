@@ -13,6 +13,7 @@ import OrderHistory from './pages/OrderHistory';
 import Adminlogin from './pages/Adminlogin';
 import Addproduct from './pages/Addproduct';
 import Vieworders from './pages/Vieworders';
+import Productdetails from './pages/Productdetails';
 
 function App() {
   return (
@@ -30,6 +31,7 @@ function App() {
           <Route path='alogin' element={<Adminlogin />}></Route>
           <Route path='addproduct' element={<Addproduct />}></Route>
           <Route path='vieworders' element={<Vieworders />}></Route>
+          <Route path='productdetails/:id' element={<Productdetails />}></Route>
         </Route>
       </Routes>
     </BrowserRouter>

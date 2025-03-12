@@ -13,6 +13,8 @@ app.use(cors({ credentials: true }))
 var ue = parser.urlencoded({ extended: true })
 app.use(parser.json())
 var products = require("./models/product")
+var Cart = require("./models/cart")
+var orders = require("./models/order")
 app.post('/createuser', ue, (req, res) => {
     var record = {
         name: req.body.name, address: req.body.address,
@@ -57,6 +59,100 @@ app.post("/addproduct", upload.single('file'), function (req, res) {
 
         })
     }
+
+})
+app.get("/getproducts/:type", (req, res) => {
+    products.find({ 'type': req.params.type }).then((records) => {
+        res.json(records)
+    })
+})
+app.get("/searchproduct/:pid", (req, res) => {
+    products.findOne({ productid: req.params.pid }).then((record) => {
+        res.json(record)
+    })
+})
+app.post("/addcart", ue, (req, res) => {
+    var record = { emailid: req.body.emailid, productid: req.body.productid, qty: req.body.qty, amt: req.body.amt }
+    Cart.create(record).then(() => {
+        res.json({ 'message': 'Product Added to Cart' })
+    })
+})
+var cartproducts = []
+app.get("/getcart/:em", (req, res) => {
+
+    Cart.find({ emailid: req.params.em }).then(records => {
+
+        records.map(row => {
+            products.findOne({ productid: row.productid }).then((rec) => {
+
+                cartproducts.push({
+                    productimage: rec.productimage, productid: rec.productid,
+                    productname: rec.productname, price: rec.price, qty: row.qty, amt: row.amt, emailid: row.emailid
+                })
+            })
+
+        })
+
+        res.json(cartproducts)
+
+        cartproducts = []
+    })
+})
+
+app.post("/addorder", ue, (req, res) => {
+    var record = { emailid: req.body.emailid, productid: req.body.productid, qty: req.body.qty, amt: req.body.amt, orderno: req.body.orderno }
+
+    orders.create(record).then((records) => {
+        Cart.deleteMany({ emailid: req.body.emailid })
+
+
+    })
+
+})
+var orderproducts = []
+app.get("/getorder/:em", (req, res) => {
+
+    orders.find({ emailid: req.params.em }).sort({ orderno: 1 }).then(records => {
+
+        records.map(row => {
+            products.findOne({ productid: row.productid }).then((rec) => {
+
+                orderproducts.push({
+                    productimage: rec.productimage, productid: rec.productid,
+                    productname: rec.productname, price: rec.price, qty: row.qty, amt: row.amt, emailid: row.emailid, orderno: row.orderno
+                })
+            })
+
+        })
+
+        res.json(orderproducts)
+
+        orderproducts = []
+    })
+})
+
+app.get("/getono", (req, res) => {
+    orders.find({}, { orderno: 1 }).distinct("orderno").then((response) => {
+        res.json(response)
+    })
+})
+var orderproducts1 = []
+app.get("/getorderdetails/:ono", (req, res) => {
+    orders.find({ orderno: req.params.ono }).then(records => {
+
+        records.map(row => {
+            products.findOne({ productid: row.productid }).then((rec) => {
+
+                orderproducts1.push({
+                    productimage: rec.productimage, productid: rec.productid, productname: rec.productname, price: rec.price, qty: row.qty, amt: row.amt, emailid: row.emailid, orderno: row.orderno
+                })
+            })
+
+        })
+        res.json(orderproducts1)
+        console.log(orderproducts1)
+        orderproducts1 = []
+    })
 
 })
 app.listen(9000, () => {
